@@ -4,7 +4,10 @@ import androidx.navigation.NavHostController
 
 sealed class RemindNavigation(val route: String) {
     object Splash : RemindNavigation("splash")
+    object Main : RemindNavigation("main")
+    object Search : RemindNavigation("search")
     object Home : RemindNavigation("home")
+    object Record : RemindNavigation("Record")
 }
 
 class RemindNavigationActions(private val navController: NavHostController) {

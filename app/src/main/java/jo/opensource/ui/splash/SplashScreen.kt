@@ -23,7 +23,7 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
         delay(1000)
-        onFinish(RemindNavigation.Home)
+        onFinish(RemindNavigation.Main)
     }
 
     Box(
