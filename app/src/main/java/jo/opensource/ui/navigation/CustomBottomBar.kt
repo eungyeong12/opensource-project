@@ -48,14 +48,12 @@ fun CustomBottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp + bottomPadding)
-            .background(MaterialTheme.colorScheme.onBackground)
+            .background(MaterialTheme.colorScheme.background)
             .padding(bottom = bottomPadding),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         items.forEach { item ->
-            val isSelected = currentRoute == item.route
-
             var pressed by remember { mutableStateOf(false) }
             val scale by animateFloatAsState(
                 targetValue = if (pressed) 0.85f else 1f,

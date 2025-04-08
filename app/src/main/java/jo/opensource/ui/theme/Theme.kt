@@ -9,13 +9,13 @@ import androidx.compose.runtime.Composable
 private val LightColors = lightColorScheme(
     background = md_theme_light_background,
     onBackground = md_theme_light_onBackground,
-    outline = md_theme_light_outline
+    onPrimary = md_theme_light_onPrimary
 )
 
 private val DarkColors = darkColorScheme(
     background = md_theme_dark_background,
     onBackground = md_theme_dark_onBackground,
-    outline = md_theme_dark_outline
+    onPrimary = md_theme_dark_onPrimary
 )
 
 @Composable

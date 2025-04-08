@@ -8,9 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jo.opensource.ui.home.HomeScreen
-import jo.opensource.ui.home.MainScreen
-import jo.opensource.ui.home.RecordScreen
-import jo.opensource.ui.home.SearchScreen
 import jo.opensource.ui.splash.SplashScreen
 
 @Composable
