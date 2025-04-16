@@ -1,4 +1,4 @@
-package jo.opensource.ui
+package jo.remind.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -9,8 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import jo.opensource.ui.home.HomeScreen
-import jo.opensource.ui.navigation.CustomBottomBar
+import jo.remind.ui.home.HomeScreen
+import jo.remind.ui.navigation.CustomBottomBar
 
 @Composable
 fun MainScreen() {

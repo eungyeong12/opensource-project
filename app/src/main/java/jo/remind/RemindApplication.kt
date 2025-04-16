@@ -1,4 +1,4 @@
-package jo.opensource
+package jo.remind
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

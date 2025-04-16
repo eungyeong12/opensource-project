@@ -1,9 +1,10 @@
-package jo.opensource.ui
+package jo.remind.ui
 
 import androidx.navigation.NavHostController
 
 sealed class RemindNavigation(val route: String) {
     object Splash : RemindNavigation("splash")
+    object Login : RemindNavigation("login")
     object Main : RemindNavigation("main")
     object Search : RemindNavigation("search")
     object Home : RemindNavigation("home")

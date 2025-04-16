@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "jo.opensource"
+    namespace = "jo.remind"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "jo.opensource"
+        applicationId = "jo.remind"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -76,8 +76,12 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }

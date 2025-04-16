@@ -1,4 +1,4 @@
-package jo.opensource.ui
+package jo.remind.ui
 
 import android.os.Bundle
 import androidx.activity.compose.setContent

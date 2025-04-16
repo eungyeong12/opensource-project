@@ -1,4 +1,4 @@
-package jo.opensource
+package jo.remind
 
 import org.junit.Test
 

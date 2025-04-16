@@ -1,4 +1,4 @@
-package jo.opensource.ui.navigation
+package jo.remind.ui.navigation
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -28,9 +28,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import jo.opensource.R
-import jo.opensource.data.BottomNavItem
+import jo.remind.R
+import jo.remind.data.BottomNavItem
 
 @Composable
 fun CustomBottomBar(

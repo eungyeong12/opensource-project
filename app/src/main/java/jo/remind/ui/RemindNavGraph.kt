@@ -1,4 +1,4 @@
-package jo.opensource.ui
+package jo.remind.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -7,8 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import jo.opensource.ui.home.HomeScreen
-import jo.opensource.ui.splash.SplashScreen
+import jo.remind.ui.home.HomeScreen
+import jo.remind.ui.login.LoginScreen
+import jo.remind.ui.splash.SplashScreen
 
 @Composable
 fun RemindNavGraph(
@@ -27,6 +28,14 @@ fun RemindNavGraph(
             SplashScreen(
                 onFinish = { destination ->
                     navActions.navigateTo(destination, RemindNavigation.Splash)
+                }
+            )
+        }
+
+        composable(RemindNavigation.Login.route) {
+            LoginScreen(
+                onLoginSuccess = {
+                    navActions.navigateTo(RemindNavigation.Main, RemindNavigation.Login)
                 }
             )
         }

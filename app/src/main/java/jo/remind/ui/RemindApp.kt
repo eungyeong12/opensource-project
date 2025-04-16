@@ -1,4 +1,4 @@
-package jo.opensource.ui
+package jo.remind.ui
 
 import androidx.compose.runtime.Composable
 

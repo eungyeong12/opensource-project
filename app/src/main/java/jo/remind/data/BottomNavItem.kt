@@ -1,4 +1,4 @@
-package jo.opensource.data
+package jo.remind.data
 
 import androidx.annotation.DrawableRes
 
