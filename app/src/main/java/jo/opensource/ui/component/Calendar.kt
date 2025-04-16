@@ -45,11 +45,17 @@ fun CalendarScreen() {
             onNext = { currentYearMonth = currentYearMonth.plusMonths(1) },
             onTextClick = { showNumberPicker = true }
         )
-        CalendarGrid(
-            yearMonth = currentYearMonth,
-            selectedDate = selectedDate,
-            onDateSelected = { selectedDate = it }
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CalendarGrid(
+                yearMonth = currentYearMonth,
+                selectedDate = selectedDate,
+                onDateSelected = { selectedDate = it }
+            )
+        }
     }
 
     if (showNumberPicker) {
@@ -77,13 +83,14 @@ fun CalendarHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 4.dp, top = 16.dp)
+            .padding(start = 4.dp, top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(R.drawable.prev),
             contentDescription = "previous month",
             modifier = Modifier
-                .size(24.dp)
+                .size(16.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
@@ -106,7 +113,7 @@ fun CalendarHeader(
             painter = painterResource(R.drawable.next),
             contentDescription = "next month",
             modifier = Modifier
-                .size(24.dp)
+                .size(16.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
@@ -134,8 +141,8 @@ fun CalendarGrid(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 32.dp),
-        verticalArrangement = Arrangement.Center
+            .wrapContentHeight(),
+        verticalArrangement = Arrangement.Center,
     ) {
         Row(Modifier.fillMaxWidth()) {
             listOf("일", "월", "화", "수", "목", "금", "토").forEach {
@@ -155,17 +162,12 @@ fun CalendarGrid(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
+                .fillMaxWidth()
                 .border(1.dp, Color(0xFFE5E5E5), RoundedCornerShape(8.dp))
                 .clip(RoundedCornerShape(8.dp))
         ) {
             weeks.forEach { week ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
+                Row() {
                     week.forEach { date ->
                         val isCurrentMonth = date.month == yearMonth.month
                         val isSelected = date == selectedDate
@@ -184,7 +186,7 @@ fun CalendarGrid(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .fillMaxHeight()
+                                .aspectRatio(0.6f)
                                 .clip(RoundedCornerShape(2.dp))
                                 .background(backgroundColor)
                                 .drawBehind {
@@ -241,16 +243,28 @@ fun NumberPickerDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                TextButton(onClick = {
-                    onConfirm(YearMonth.of(selectedYear, selectedMonth))
-                }) {
-                    Text(text = "취소", color = Color(0xFF1E93EF))
+                Box(
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            onConfirm(YearMonth.of(selectedYear, selectedMonth))
+                        }
+                ) {
+                    Text(text = "취소", color = Color(0xFF4CAF50))
                 }
-                Spacer(modifier = Modifier.width(40.dp))
-                TextButton(onClick = {
-                    onConfirm(YearMonth.of(selectedYear, selectedMonth))
-                }) {
-                    Text(text = "확인", color = Color(0xFF1E93EF))
+                Spacer(modifier = Modifier.width(64.dp))
+                Box(
+                    modifier = Modifier
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            onConfirm(YearMonth.of(selectedYear, selectedMonth))
+                        }
+                ) {
+                    Text(text = "확인", color = Color(0xFF4CAF50))
                 }
             }
         },
