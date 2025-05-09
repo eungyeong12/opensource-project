@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import jo.remind.BuildConfig
 import jo.remind.data.model.Movie
 import jo.remind.data.network.RetrofitClient
+import jo.remind.data.repository.MovieRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,7 +34,9 @@ private val genreMap = mapOf(
 )
 
 @HiltViewModel
-class MovieSearchViewModel @Inject constructor() : ViewModel() {
+class MovieSearchViewModel @Inject constructor(
+    private val repository: MovieRepository
+) : ViewModel() {
 
     var movieList by mutableStateOf<List<Movie>>(emptyList())
         private set
@@ -43,10 +46,9 @@ class MovieSearchViewModel @Inject constructor() : ViewModel() {
 
     fun searchMovies(query: String) {
         viewModelScope.launch {
+            isLoading = true
             try {
-                isLoading = true
-                val response = RetrofitClient.apiService.searchMovies(query, BuildConfig.API_KEY)
-                movieList = response.results
+                movieList = repository.getOrFetchMovies(query)
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -59,3 +61,4 @@ class MovieSearchViewModel @Inject constructor() : ViewModel() {
         return genreIds.map { genreMap[it] ?: "기타" }.distinct().joinToString(", ")
     }
 }
+

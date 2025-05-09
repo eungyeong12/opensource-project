@@ -36,22 +36,21 @@ fun MovieCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .border(width = 1.dp, color = Color(0xFFD5D5D5), shape = RoundedCornerShape(16.dp))
+            .border(width = 1.dp, color = Color(0xFFE1E1E1), shape = RoundedCornerShape(16.dp))
             .background(Color.White, shape = RoundedCornerShape(16.dp))
-            .padding(12.dp)
+            .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = imageUrl ?: R.drawable.placeholder,
                 contentDescription = "Movie Poster",
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(width = 64.dp, height = 84.dp)
+                    .size(width = 74.dp, height = 104.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFFE0E0E0))
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             Column {
                 Text(

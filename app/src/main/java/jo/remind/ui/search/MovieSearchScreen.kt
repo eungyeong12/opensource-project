@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -134,7 +136,8 @@ fun MovieSearchScreen(
                         focusManager.clearFocus()
                     }
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                focusManager = focusManager
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -162,7 +165,11 @@ fun MovieSearchScreen(
         val isLoading = viewModel.isLoading
 
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+            ) {
                 items(movieList) { movie ->
                     val genreText = viewModel.mapGenreIdsToNames(movie.genre_ids)
                     MovieCard(
@@ -182,7 +189,7 @@ fun MovieSearchScreen(
                         .background(Color.White.copy(alpha = 0.6f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = Color(0xFF009688))
                 }
             }
         }
@@ -195,7 +202,8 @@ fun MovieSearchInput(
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
     modifier: Modifier = Modifier,
-    hint: String = "영화를 검색해보세요!"
+    hint: String = "영화를 검색해보세요!",
+    focusManager: FocusManager
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -209,7 +217,7 @@ fun MovieSearchInput(
         Image(
             painter = painterResource(id = R.drawable.search),
             contentDescription = "검색 아이콘",
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.size(20.dp)
         )
         TextField(
             value = query,
@@ -225,6 +233,7 @@ fun MovieSearchInput(
             keyboardActions = KeyboardActions(
                 onSearch = {
                     keyboardController?.hide()
+                    focusManager.clearFocus()
                     onSearch()
                 }
             ),
@@ -235,7 +244,7 @@ fun MovieSearchInput(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                cursorColor = MaterialTheme.colorScheme.primary,
+                cursorColor = Color(0xFF009688),
                 unfocusedTextColor = Color.Black,
                 focusedTextColor = Color.Black
             )

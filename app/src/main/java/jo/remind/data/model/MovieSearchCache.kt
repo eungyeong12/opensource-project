@@ -1,0 +1,7 @@
+package jo.remind.data.model
+
+data class MovieSearchCache(
+    val query: String = "",
+    val results: List<Movie> = emptyList(),
+    val timestamp: Long = System.currentTimeMillis()
+)
