@@ -19,12 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import jo.remind.R
+import jo.remind.ui.RemindNavigation
 import jo.remind.ui.component.CalendarScreen
 import jo.remind.ui.component.RecordTypeDialog
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navController: NavHostController
+) {
     var showDialog by remember { mutableStateOf(false) }
 
     Box(
@@ -57,6 +61,9 @@ fun HomeScreen() {
                 onDismiss = { showDialog = false },
                 onSelect = { selected ->
                     showDialog = false
+                    if (selected == "영화 기록하기") {
+                        navController.navigate(RemindNavigation.MovieSearch.route)
+                    }
                 }
             )
         }

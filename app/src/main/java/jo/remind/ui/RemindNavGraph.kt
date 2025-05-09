@@ -6,15 +6,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.login.LoginScreen
+import jo.remind.ui.search.MovieSearchScreen
 import jo.remind.ui.splash.SplashScreen
 
 @Composable
 fun RemindNavGraph(
-    startDestination: RemindNavigation = RemindNavigation.Splash,
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
+    startDestination: RemindNavigation,
     modifier: Modifier = Modifier
 ) {
     val navActions = remember(navController) { RemindNavigationActions(navController) }
@@ -25,19 +25,15 @@ fun RemindNavGraph(
         modifier = modifier
     ) {
         composable(RemindNavigation.Splash.route) {
-            SplashScreen(
-                onFinish = { destination ->
-                    navActions.navigateTo(destination, RemindNavigation.Splash)
-                }
-            )
+            SplashScreen(onFinish = { destination ->
+                navActions.navigateTo(destination, RemindNavigation.Splash)
+            })
         }
 
         composable(RemindNavigation.Login.route) {
-            LoginScreen(
-                onLoginSuccess = {
-                    navActions.navigateTo(RemindNavigation.Main, RemindNavigation.Login)
-                }
-            )
+            LoginScreen(onLoginSuccess = {
+                navActions.navigateTo(RemindNavigation.Main, RemindNavigation.Login)
+            })
         }
 
         composable(RemindNavigation.Main.route) {
@@ -47,13 +43,15 @@ fun RemindNavGraph(
         composable(RemindNavigation.Search.route) {
             SearchScreen()
         }
-
         composable(RemindNavigation.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
-
         composable(RemindNavigation.Record.route) {
             RecordScreen()
         }
+        composable(RemindNavigation.MovieSearch.route) {
+            MovieSearchScreen(navController)
+        }
     }
 }
+

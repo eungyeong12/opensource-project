@@ -1,4 +1,4 @@
-package jo.remind.data
+package jo.remind.data.model
 
 data class User(
     val uid: String = "",

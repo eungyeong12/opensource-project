@@ -8,7 +8,8 @@ sealed class RemindNavigation(val route: String) {
     object Main : RemindNavigation("main")
     object Search : RemindNavigation("search")
     object Home : RemindNavigation("home")
-    object Record : RemindNavigation("Record")
+    object Record : RemindNavigation("record")
+    object MovieSearch : RemindNavigation("movie_search")
 }
 
 class RemindNavigationActions(private val navController: NavHostController) {

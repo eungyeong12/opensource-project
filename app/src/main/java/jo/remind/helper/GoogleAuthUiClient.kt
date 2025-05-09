@@ -1,6 +1,5 @@
 package jo.remind.helper
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -10,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import jo.remind.R
-import jo.remind.data.User
+import jo.remind.data.model.User
 import kotlinx.coroutines.tasks.await
 
 class GoogleAuthUiClient(context: Context) {
