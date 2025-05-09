@@ -165,6 +165,8 @@ fun MovieSearchScreen(
         val isLoading = viewModel.isLoading
 
         Box(modifier = Modifier.fillMaxSize()) {
+            var selectedMovieId by remember { mutableStateOf<Int?>(null) }
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -172,11 +174,17 @@ fun MovieSearchScreen(
             ) {
                 items(movieList) { movie ->
                     val genreText = viewModel.mapGenreIdsToNames(movie.genre_ids)
+                    val isSelected = selectedMovieId == movie.id
+
                     MovieCard(
                         title = movie.title,
                         releaseDate = movie.release_date,
                         genreText = genreText,
-                        imageUrl = movie.poster_path?.let { "https://image.tmdb.org/t/p/w500$it" }
+                        imageUrl = movie.poster_path?.let { "https://image.tmdb.org/t/p/w500$it" },
+                        isSelected = isSelected,
+                        onClick = {
+                            selectedMovieId = if (selectedMovieId == movie.id) null else movie.id
+                        }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
