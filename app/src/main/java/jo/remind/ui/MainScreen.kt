@@ -11,6 +11,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.navigation.CustomBottomBar
+import jo.remind.ui.registration.MovieRegistrationScreen
 import jo.remind.ui.search.MovieSearchScreen
 
 @Composable
@@ -40,11 +41,10 @@ fun MainScreen() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = RemindNavigation.Home.route,
-            modifier = Modifier.padding(innerPadding)
+            startDestination = RemindNavigation.Home.route
         ) {
             composable(RemindNavigation.Home.route) {
-                HomeScreen(navController)
+                HomeScreen(navController, modifier = Modifier.padding(innerPadding))
             }
             composable(RemindNavigation.Search.route) {
                 SearchScreen()
@@ -53,7 +53,10 @@ fun MainScreen() {
                 RecordScreen()
             }
             composable(RemindNavigation.MovieSearch.route) {
-                MovieSearchScreen(navController)
+                MovieSearchScreen(navController, modifier = Modifier.padding(innerPadding))
+            }
+            composable(RemindNavigation.MovieRegistration.route) {
+                MovieRegistrationScreen(navController, modifier = Modifier.padding(innerPadding))
             }
         }
     }

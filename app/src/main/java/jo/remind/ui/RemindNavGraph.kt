@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.login.LoginScreen
+import jo.remind.ui.registration.MovieRegistrationScreen
 import jo.remind.ui.search.MovieSearchScreen
 import jo.remind.ui.splash.SplashScreen
 
@@ -43,14 +44,21 @@ fun RemindNavGraph(
         composable(RemindNavigation.Search.route) {
             SearchScreen()
         }
+
         composable(RemindNavigation.Home.route) {
             HomeScreen(navController)
         }
+
         composable(RemindNavigation.Record.route) {
             RecordScreen()
         }
+
         composable(RemindNavigation.MovieSearch.route) {
             MovieSearchScreen(navController)
+        }
+
+        composable(RemindNavigation.MovieRegistration.route) {
+            MovieRegistrationScreen(navController)
         }
     }
 }

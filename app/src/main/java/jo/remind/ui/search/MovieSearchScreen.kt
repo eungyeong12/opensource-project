@@ -19,16 +19,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import jo.remind.R
+import jo.remind.ui.RemindNavigation
 import jo.remind.ui.component.MovieCard
 import jo.remind.viewmodel.MovieSearchViewModel
 
@@ -103,7 +100,8 @@ fun MovieSearchTopBar(
 @Composable
 fun MovieSearchScreen(
     navController: NavHostController,
-    viewModel: MovieSearchViewModel = hiltViewModel()
+    viewModel: MovieSearchViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val movieList = viewModel.movieList
     var query by remember { mutableStateOf("") }
@@ -111,7 +109,7 @@ fun MovieSearchScreen(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -151,11 +149,7 @@ fun MovieSearchScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        if (query.isNotBlank()) {
-                            viewModel.searchMovies(query)
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                        }
+                        navController.navigate(RemindNavigation.MovieRegistration.route)
                     }
             )
         }
@@ -215,47 +209,56 @@ fun MovieSearchInput(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
         modifier = modifier
-            .background(Color(0xFFF0F0F0), shape = RoundedCornerShape(80))
-            .padding(horizontal = 24.dp)
-            .fillMaxWidth()
+            .background(Color(0xFFF0F0F0), shape = RoundedCornerShape(70))
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.search),
-            contentDescription = "검색 아이콘",
-            modifier = Modifier.size(20.dp)
-        )
-        TextField(
-            value = query,
-            onValueChange = onQueryChange,
-            placeholder = {
-                Text(text = hint, fontSize = 14.sp, color = Color.Gray)
-            },
-            modifier = Modifier
-                .weight(1f)
-                .height(52.dp),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                    onSearch()
-                }
-            ),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                cursorColor = Color(0xFF009688),
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.search),
+                contentDescription = "검색 아이콘",
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .size(16.dp)
             )
-        )
+
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (query.isEmpty()) {
+                    Text(
+                        text = hint,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
+
+                BasicTextField(
+                    value = query,
+                    onValueChange = onQueryChange,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                            onSearch()
+                        }
+                    ),
+                    textStyle = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 14.sp,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
 }

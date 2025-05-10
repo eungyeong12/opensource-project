@@ -10,6 +10,7 @@ sealed class RemindNavigation(val route: String) {
     object Home : RemindNavigation("home")
     object Record : RemindNavigation("record")
     object MovieSearch : RemindNavigation("movie_search")
+    object MovieRegistration : RemindNavigation("movie_registration")
 }
 
 class RemindNavigationActions(private val navController: NavHostController) {
