@@ -53,10 +53,10 @@ fun MainScreen() {
                 RecordScreen()
             }
             composable(RemindNavigation.MovieSearch.route) {
-                MovieSearchScreen(navController, modifier = Modifier.padding(innerPadding))
+                MovieSearchScreen(navController)
             }
             composable(RemindNavigation.MovieRegistration.route) {
-                MovieRegistrationScreen(navController, modifier = Modifier.padding(innerPadding))
+                MovieRegistrationScreen(navController)
             }
         }
     }

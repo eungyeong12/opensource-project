@@ -128,7 +128,6 @@ fun MovieRegistrationTopBar(
 @Composable
 fun MovieRegistrationScreen(
     navController: NavHostController,
-    modifier: Modifier = Modifier
 ) {
     var title by remember { mutableStateOf("") }
     var director by remember { mutableStateOf("") }
@@ -160,7 +159,7 @@ fun MovieRegistrationScreen(
                 .background(Color(0xFFE9E9E9))
         ) {
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxSize()
             ) {
                 val hasImage = imageUri.value != null
@@ -189,7 +188,7 @@ fun MovieRegistrationScreen(
                 MovieRegistrationTopBar(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier
-                        .padding(top = 12.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
                     textColor = if (hasImage) Color.White else Color.Black
                 )
 
@@ -199,7 +198,7 @@ fun MovieRegistrationScreen(
                     color = if (hasImage) Color.White else Color.Black,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .offset(y = 48.dp)
+                        .offset(y = 12.dp)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null

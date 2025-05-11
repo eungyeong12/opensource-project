@@ -101,7 +101,6 @@ fun MovieSearchTopBar(
 fun MovieSearchScreen(
     navController: NavHostController,
     viewModel: MovieSearchViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
 ) {
     val movieList = viewModel.movieList
     var query by remember { mutableStateOf("") }
@@ -109,10 +108,10 @@ fun MovieSearchScreen(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 32.dp)
     ) {
         MovieSearchTopBar(
             onClick = { navController.popBackStack() }
