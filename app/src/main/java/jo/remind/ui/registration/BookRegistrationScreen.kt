@@ -1,10 +1,6 @@
 package jo.remind.ui.registration
 
 import android.net.Uri
-import android.view.Gravity
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.NumberPicker
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -22,10 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,15 +29,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -52,7 +42,7 @@ import jo.remind.R
 import java.time.LocalDate
 
 @Composable
-fun MovieRegistrationTopBar(
+fun BookRegistrationTopBar(
     onClick: () -> Unit,
     modifier: Modifier,
     textColor: Color
@@ -100,7 +90,7 @@ fun MovieRegistrationTopBar(
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                text = "영화 등록",
+                text = "책 등록",
                 color = textColor,
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 18.sp,
@@ -126,11 +116,11 @@ fun MovieRegistrationTopBar(
 }
 
 @Composable
-fun MovieRegistrationScreen(
+fun BookRegistrationScreen(
     navController: NavHostController,
 ) {
     var title by remember { mutableStateOf("") }
-    var director by remember { mutableStateOf("") }
+    var author by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(5.0f) }
     val today = LocalDate.now()
     var year by remember { mutableStateOf(today.year) }
@@ -185,7 +175,7 @@ fun MovieRegistrationScreen(
                     )
                 }
 
-                MovieRegistrationTopBar(
+                BookRegistrationTopBar(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier
                         .padding(top = 32.dp, start = 16.dp, end = 16.dp),
@@ -218,8 +208,8 @@ fun MovieRegistrationScreen(
                     .padding(horizontal = 24.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                LabeledInput(label = "영화 제목", value = title) { title = it }
-                LabeledInput(label = "영화 감독", value = director) { director = it }
+                LabeledInput(label = "도서 제목", value = title) { title = it }
+                LabeledInput(label = "도서 저자", value = author) { author = it }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -227,7 +217,7 @@ fun MovieRegistrationScreen(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "개봉일",
+                        text = "출판일",
                         style = MaterialTheme.typography.titleMedium,
                     )
 
@@ -265,138 +255,4 @@ fun MovieRegistrationScreen(
             }
         }
     }
-}
-
-@Composable
-fun LabeledInput(label: String, value: String, onValueChange: (String) -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(end = 12.dp)
-        )
-
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .background(Color(0xFFF6F9F2), shape = RoundedCornerShape(24.dp))
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            var isFocused by remember { mutableStateOf(false) }
-
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onFocusChanged { isFocused = it.isFocused },
-                textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
-                cursorBrush = SolidColor(Color.Black),
-                decorationBox = { innerTextField ->
-                    if (value.isEmpty() && !isFocused) {
-                        Text(
-                            text = "${label.substring(3)}을 입력해주세요",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Gray
-                        )
-                    }
-                    innerTextField()
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun DatePicker(
-    year: Int,
-    month: Int,
-    day: Int,
-    onDateChanged: (Int, Int, Int) -> Unit
-) {
-    AndroidView(
-        factory = { context ->
-            val dp8 = (8 * context.resources.displayMetrics.density).toInt()
-
-            LinearLayout(context).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER
-
-                val yearPicker = NumberPicker(context).apply {
-                    minValue = 1800
-                    maxValue = 2125
-                    value = year
-                    setOnValueChangedListener { _, _, newVal ->
-                        onDateChanged(newVal, month, day)
-                    }
-                }
-
-                val monthPicker = NumberPicker(context).apply {
-                    minValue = 1
-                    maxValue = 12
-                    value = month
-                    setOnValueChangedListener { _, _, newVal ->
-                        onDateChanged(year, newVal, day)
-                    }
-                }
-
-                val dayPicker = NumberPicker(context).apply {
-                    minValue = 1
-                    maxValue = 31
-                    value = day
-                    setOnValueChangedListener { _, _, newVal ->
-                        onDateChanged(year, month, newVal)
-                    }
-                }
-
-                val spacer1 = View(context).apply {
-                    layoutParams = LinearLayout.LayoutParams(dp8, 0)
-                }
-
-                val spacer2 = View(context).apply {
-                    layoutParams = LinearLayout.LayoutParams(dp8, 0)
-                }
-
-                addView(yearPicker)
-                addView(spacer1)
-                addView(monthPicker)
-                addView(spacer2)
-                addView(dayPicker)
-            }
-        }
-    )
-}
-
-@Composable
-fun RatingBar(
-    rating: Float,
-    onRatingChanged: (Float) -> Unit,
-) {
-    AndroidView(
-        factory = { context ->
-            android.widget.RatingBar(context, null, android.R.attr.ratingBarStyleIndicator).apply {
-                numStars = 5
-                stepSize = 0.5f
-                this.rating = rating
-                setIsIndicator(false)
-
-                progressDrawable.setTint(android.graphics.Color.BLACK)
-
-                scaleX = 0.9f
-                scaleY = 0.9f
-
-                setOnRatingBarChangeListener { _, newRating, _ ->
-                    onRatingChanged(newRating)
-                }
-            }
-        },
-        update = { rb ->
-            if (rb.rating != rating) {
-                rb.rating = rating
-            }
-        }
-    )
 }

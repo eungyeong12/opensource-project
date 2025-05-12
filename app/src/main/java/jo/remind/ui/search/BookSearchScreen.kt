@@ -154,7 +154,7 @@ fun BookSearchScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        navController.navigate(RemindNavigation.MovieRegistration.route)
+                        navController.navigate(RemindNavigation.BookRegistration.route)
                     }
             )
         }

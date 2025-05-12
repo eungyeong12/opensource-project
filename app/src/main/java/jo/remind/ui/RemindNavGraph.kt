@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.login.LoginScreen
+import jo.remind.ui.registration.BookRegistrationScreen
 import jo.remind.ui.registration.MovieRegistrationScreen
 import jo.remind.ui.search.BookSearchScreen
 import jo.remind.ui.search.MovieSearchScreen
@@ -64,6 +65,10 @@ fun RemindNavGraph(
 
         composable(RemindNavigation.MovieRegistration.route) {
             MovieRegistrationScreen(navController)
+        }
+
+        composable(RemindNavigation.BookRegistration.route) {
+            BookRegistrationScreen(navController)
         }
     }
 }
