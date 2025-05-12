@@ -43,7 +43,7 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
     ) {
-        CalendarScreen()
+        CalendarScreen(navController = navController)
 
         FloatingActionButton(
             onClick = { showDialog = true },

@@ -23,15 +23,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavHostController
 import jo.remind.R
+import jo.remind.ui.RemindNavigation
 import java.time.LocalDate
 import java.time.YearMonth
 
 @Composable
-fun CalendarScreen() {
+fun CalendarScreen(
+    navController: NavHostController
+) {
     var currentYearMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showNumberPicker by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -51,7 +56,10 @@ fun CalendarScreen() {
             CalendarGrid(
                 yearMonth = currentYearMonth,
                 selectedDate = selectedDate,
-                onDateSelected = { selectedDate = it }
+                onDateSelected = {
+                    selectedDate = it
+                    showDialog = true
+                }
             )
         }
     }
@@ -66,6 +74,21 @@ fun CalendarScreen() {
                 val maxDay = it.lengthOfMonth()
                 selectedDate = it.atDay(minOf(newDay, maxDay))
                 showNumberPicker = false
+            }
+        )
+    }
+
+    if (showDialog) {
+        RecordTypeDialog(
+            onDismiss = { showDialog = false },
+            onSelect = { selected ->
+                showDialog = false
+                if (selected == "영화 기록하기") {
+                    navController.navigate(RemindNavigation.MovieSearch.route)
+                }
+                if (selected == "책 기록하기") {
+                    navController.navigate(RemindNavigation.BookSearch.route)
+                }
             }
         )
     }
