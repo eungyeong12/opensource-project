@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -108,12 +111,13 @@ fun BookSearchScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     var selectedBookIsbn by remember { mutableStateOf<String?>(null) }
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 16.dp, vertical = 32.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 32.dp, bottom = bottomPadding + 56.dp)
     ) {
         BookSearchTopBar(
             onClick = { navController.popBackStack() }
