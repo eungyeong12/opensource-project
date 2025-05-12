@@ -117,7 +117,7 @@ fun BookSearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp, bottom = bottomPadding + 56.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 36.dp, bottom = bottomPadding + 56.dp)
     ) {
         BookSearchTopBar(
             onClick = { navController.popBackStack() }

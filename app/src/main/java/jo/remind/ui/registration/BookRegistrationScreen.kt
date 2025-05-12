@@ -178,7 +178,7 @@ fun BookRegistrationScreen(
                 BookRegistrationTopBar(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+                        .padding(top = 36.dp, start = 16.dp, end = 16.dp),
                     textColor = if (hasImage) Color.White else Color.Black
                 )
 

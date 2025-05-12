@@ -36,7 +36,6 @@ fun CalendarScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
     ) {
         CalendarHeader(
             yearMonth = currentYearMonth,
@@ -82,7 +81,7 @@ fun CalendarHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 4.dp, top = 16.dp),
+            .padding(top = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -137,19 +136,14 @@ fun CalendarGrid(
         firstDayOfMonth.plusDays(dayOffset.toLong())
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.fillMaxWidth()) {
             listOf("일", "월", "화", "수", "목", "금", "토").forEach {
                 Text(
                     text = it,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(bottom = 12.dp),
+                        .padding(vertical = 8.dp),
                     textAlign = TextAlign.Center,
                     color = Color.Gray,
                     fontSize = 14.sp
@@ -162,47 +156,32 @@ fun CalendarGrid(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, Color(0xFFE5E5E5), RoundedCornerShape(8.dp))
+                .border(1.1.dp, Color(0xFFEEEEEE), RoundedCornerShape(8.dp))
                 .clip(RoundedCornerShape(8.dp))
         ) {
             weeks.forEach { week ->
-                Row() {
+                Row(modifier = Modifier.fillMaxWidth()) {
                     week.forEach { date ->
                         val isCurrentMonth = date.month == yearMonth.month
                         val isSelected = date == selectedDate
 
                         val backgroundColor = when {
                             isSelected && isCurrentMonth -> MaterialTheme.colorScheme.onPrimary
-                            !isCurrentMonth -> Color(0x80A5A5A5)
+                            !isCurrentMonth -> Color(0xFFF8F8F8)
                             else -> Color.Transparent
                         }
 
-                        val borderColor = when {
-                            !isCurrentMonth -> Color(0x809A9A9A)
-                            else -> Color(0xFFDADADA)
-                        }
+                        val textColor = if (isCurrentMonth) Color.Black else Color(0xFFF8F8F8)
 
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(0.6f)
-                                .clip(RoundedCornerShape(2.dp))
+                                .height(78.dp)
+                                .border(
+                                    width = 0.5.dp,
+                                    color = Color(0xFFEEEEEE)
+                                )
                                 .background(backgroundColor)
-                                .drawBehind {
-                                    val strokeWidth = 1.dp.toPx()
-                                    drawLine(
-                                        color = borderColor,
-                                        start = Offset(0f, size.height),
-                                        end = Offset(size.width, size.height),
-                                        strokeWidth = strokeWidth
-                                    )
-                                    drawLine(
-                                        color = borderColor,
-                                        start = Offset(size.width, 0f),
-                                        end = Offset(size.width, size.height),
-                                        strokeWidth = strokeWidth
-                                    )
-                                }
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null
@@ -214,8 +193,8 @@ fun CalendarGrid(
                             Text(
                                 text = date.dayOfMonth.toString(),
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(top = 6.dp, start = 8.dp),
-                                color = if (isCurrentMonth) Color.Black else Color.Transparent
+                                modifier = Modifier.padding(6.dp),
+                                color = textColor
                             )
                         }
                     }
