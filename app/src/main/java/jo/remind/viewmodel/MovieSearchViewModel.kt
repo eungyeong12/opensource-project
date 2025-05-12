@@ -4,9 +4,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jo.remind.BuildConfig
-import jo.remind.data.model.Movie
-import jo.remind.data.network.RetrofitClient
+import jo.remind.data.model.movie.Movie
 import jo.remind.data.repository.MovieRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject

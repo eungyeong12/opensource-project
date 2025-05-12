@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.navigation.CustomBottomBar
 import jo.remind.ui.registration.MovieRegistrationScreen
+import jo.remind.ui.search.BookSearchScreen
 import jo.remind.ui.search.MovieSearchScreen
 
 @Composable
@@ -54,6 +55,9 @@ fun MainScreen() {
             }
             composable(RemindNavigation.MovieSearch.route) {
                 MovieSearchScreen(navController)
+            }
+            composable(RemindNavigation.BookSearch.route) {
+                BookSearchScreen(navController)
             }
             composable(RemindNavigation.MovieRegistration.route) {
                 MovieRegistrationScreen(navController)

@@ -2,8 +2,8 @@ package jo.remind.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import jo.remind.BuildConfig
-import jo.remind.data.model.Movie
-import jo.remind.data.model.MovieSearchCache
+import jo.remind.data.model.movie.Movie
+import jo.remind.data.model.movie.MovieSearchCache
 import jo.remind.data.network.RetrofitClient
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -20,7 +20,7 @@ class MovieRepository @Inject constructor(
             android.util.Log.d("MovieRepo", "Loaded from Firestore: ${cache?.results?.size} items")
             return cache?.results ?: emptyList()
         } else {
-            val response = RetrofitClient.apiService.searchMovies(query, BuildConfig.API_KEY)
+            val response = RetrofitClient.movieApiService.searchMovies(query, BuildConfig.API_KEY)
             val movies = response.results
             val cache = MovieSearchCache(query, movies)
             docRef.set(cache).await()

@@ -65,6 +65,9 @@ fun HomeScreen(
                     if (selected == "영화 기록하기") {
                         navController.navigate(RemindNavigation.MovieSearch.route)
                     }
+                    if (selected == "책 기록하기") {
+                        navController.navigate(RemindNavigation.BookSearch.route)
+                    }
                 }
             )
         }

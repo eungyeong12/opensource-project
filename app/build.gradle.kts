@@ -13,6 +13,7 @@ val localProperties = Properties().apply {
 }
 
 val apiKey = localProperties.getProperty("api_key") ?: ""
+val kakaoApiKey = localProperties.getProperty("kakao_api_key") ?: ""
 
 android {
     namespace = "jo.remind"
@@ -28,6 +29,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "BOOK_API_KEY", "\"$kakaoApiKey\"")
     }
 
     buildTypes {

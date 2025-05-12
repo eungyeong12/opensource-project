@@ -1,4 +1,4 @@
-package jo.remind.data.model
+package jo.remind.data.model.movie
 
 data class MovieResponse(
     val results: List<Movie>

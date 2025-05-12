@@ -1,6 +1,6 @@
 package jo.remind.data.network
 
-import jo.remind.data.model.MovieResponse
+import jo.remind.data.model.movie.MovieResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
