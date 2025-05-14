@@ -181,6 +181,7 @@ fun MovieSearchScreen(
                         isSelected = isSelected,
                         onClick = {
                             selectedMovieId = if (selectedMovieId == movie.id) null else movie.id
+                            navController.navigate(RemindNavigation.MovieRecord.route)
                         }
                     )
                     Spacer(modifier = Modifier.height(8.dp))

@@ -49,13 +49,15 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import jo.remind.R
+import jo.remind.ui.RemindNavigation
 import java.time.LocalDate
 
 @Composable
 fun MovieRegistrationTopBar(
     onClick: () -> Unit,
     modifier: Modifier,
-    textColor: Color
+    textColor: Color,
+    navController: NavHostController
 ) {
     val backIcon = if (textColor == Color.White) {
         R.drawable.prev_white
@@ -118,6 +120,7 @@ fun MovieRegistrationTopBar(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
+                        navController.navigate(RemindNavigation.MovieRecord.route)
                     }
             )
         }
@@ -189,7 +192,8 @@ fun MovieRegistrationScreen(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier
                         .padding(top = 36.dp, start = 16.dp, end = 16.dp),
-                    textColor = if (hasImage) Color.White else Color.Black
+                    textColor = if (hasImage) Color.White else Color.Black,
+                    navController = navController
                 )
 
                 Text(
