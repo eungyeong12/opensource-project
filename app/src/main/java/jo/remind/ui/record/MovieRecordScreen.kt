@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -127,6 +129,7 @@ fun MovieRecordScreen(
 ) {
     var rating by remember { mutableStateOf(5.0f) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var memoText by remember { mutableStateOf("") }
 
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -210,11 +213,21 @@ fun MovieRecordScreen(
                 .background(Color(0xFFF6F9F2)),
             contentAlignment = Alignment.TopStart
         ) {
-            Text(
-                text = "기억나는 내용을 입력해보세요!",
-                modifier = Modifier.padding(16.dp),
-                color = Color.Gray,
-                fontSize = 14.sp
+            if (memoText.isEmpty()) {
+                Text(
+                    text = "가장 기억에 남는 장면이나 대사를 기록해보세요.",
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            BasicTextField(
+                value = memoText,
+                onValueChange = { memoText = it },
+                textStyle = TextStyle(fontSize = 14.sp, color = Color.Black),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             )
         }
     }
