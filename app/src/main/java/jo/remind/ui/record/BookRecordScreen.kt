@@ -48,7 +48,7 @@ import coil.request.ImageRequest
 import jo.remind.R
 
 @Composable
-fun MovieRecordTopBar(
+fun BookRecordTopBar(
     onClick: () -> Unit,
     modifier: Modifier,
     textColor: Color
@@ -96,7 +96,7 @@ fun MovieRecordTopBar(
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                text = "영화 제목",
+                text = "책 제목",
                 color = textColor,
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 18.sp,
@@ -122,7 +122,7 @@ fun MovieRecordTopBar(
 }
 
 @Composable
-fun MovieRecordScreen(
+fun BookRecordScreen(
     navController: NavHostController,
 ) {
     var rating by remember { mutableStateOf(5.0f) }
@@ -168,7 +168,7 @@ fun MovieRecordScreen(
                 )
             }
 
-            MovieRecordTopBar(
+            BookRecordTopBar(
                 onClick = { navController.popBackStack() },
                 modifier = Modifier
                     .padding(top = 36.dp, start = 16.dp, end = 16.dp),
@@ -198,7 +198,7 @@ fun MovieRecordScreen(
                     .border(2.dp, Color(0xFFE0E0E0), shape = RoundedCornerShape(50))
                     .padding(horizontal = 10.dp, vertical = 10.dp)
             ) {
-                MovieRatingBar(rating = rating, onRatingChanged = { rating = it })
+                BookRatingBar(rating = rating, onRatingChanged = { rating = it })
             }
         }
 
@@ -221,7 +221,7 @@ fun MovieRecordScreen(
 }
 
 @Composable
-fun MovieRatingBar(
+fun BookRatingBar(
     rating: Float,
     onRatingChanged: (Float) -> Unit,
 ) {

@@ -182,6 +182,7 @@ fun BookSearchScreen(
                         isSelected = isSelected,
                         onClick = {
                             selectedBookIsbn = if (isSelected) null else book.isbn
+                            navController.navigate(RemindNavigation.BookRecord.route)
                         }
                     )
                     Spacer(modifier = Modifier.height(8.dp))

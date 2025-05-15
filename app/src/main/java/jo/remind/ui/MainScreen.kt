@@ -11,6 +11,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.navigation.CustomBottomBar
+import jo.remind.ui.record.BookRecordScreen
 import jo.remind.ui.record.MovieRecordScreen
 import jo.remind.ui.registration.BookRegistrationScreen
 import jo.remind.ui.registration.MovieRegistrationScreen
@@ -69,6 +70,9 @@ fun MainScreen() {
             }
             composable(RemindNavigation.MovieRecord.route) {
                 MovieRecordScreen(navController)
+            }
+            composable(RemindNavigation.BookRecord.route) {
+                BookRecordScreen(navController)
             }
         }
     }
