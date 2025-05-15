@@ -96,7 +96,7 @@ fun MovieRegistrationTopBar(
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                text = "영화 등록",
+                text = "영화 제목",
                 color = textColor,
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 18.sp,
