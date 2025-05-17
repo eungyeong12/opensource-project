@@ -16,8 +16,12 @@ sealed class RemindNavigation(val route: String) {
     object BookSearch : RemindNavigation("book_search") {
         fun withDate(date: String) = "$route?date=$date"
     }
-    object MovieRegistration : RemindNavigation("movie_registration")
-    object BookRegistration : RemindNavigation("book_registration")
+    object MovieRegistration : RemindNavigation("movie_registration") {
+        fun withDate(date: String) = "$route?date=$date"
+    }
+    object BookRegistration : RemindNavigation("book_registration") {
+        fun withDate(date: String) = "$route?date=$date"
+    }
     object MovieRecord : RemindNavigation("movie_record")
     object BookRecord : RemindNavigation("book_record")
     object DailyRecord : RemindNavigation("daily_record") {

@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -49,45 +50,38 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import jo.remind.R
+import jo.remind.data.model.record.MovieRecord
 import jo.remind.ui.RemindNavigation
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun MovieRegistrationTopBar(
     onClick: () -> Unit,
+    onClickSave: () -> Unit,
     modifier: Modifier,
     textColor: Color,
-    navController: NavHostController
+    navController: NavHostController,
+    imageUri: Uri?,
+    title: String,
+    director: String
 ) {
-    val backIcon = if (textColor == Color.White) {
-        R.drawable.prev_white
-    } else {
-        R.drawable.prev
-    }
+    val context = LocalContext.current
+    val backIcon = if (textColor == Color.White) R.drawable.prev_white else R.drawable.prev
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             Image(
                 painter = painterResource(id = R.drawable.cancel),
                 contentDescription = "취소",
-                modifier = Modifier
-                    .size(16.dp)
-                    .alpha(0f)
+                modifier = Modifier.size(16.dp).alpha(0f)
             )
         }
 
         Spacer(modifier = Modifier.padding(top = 8.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Image(
                 painter = painterResource(id = backIcon),
                 contentDescription = "뒤로가기",
@@ -120,11 +114,22 @@ fun MovieRegistrationTopBar(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        navController.navigate(RemindNavigation.MovieRecord.route)
+                        if (imageUri == null) {
+                            Toast.makeText(context, "영화 이미지를 추가해주세요.", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        if (title.isBlank()) {
+                            Toast.makeText(context, "영화 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        if (director.isBlank()) {
+                            Toast.makeText(context, "영화 감독을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        onClickSave()
                     }
             )
         }
-
     }
 }
 
@@ -132,6 +137,15 @@ fun MovieRegistrationTopBar(
 fun MovieRegistrationScreen(
     navController: NavHostController,
 ) {
+    val dateArg = navController.currentBackStackEntry?.arguments?.getString("date")
+    val selectedDate = remember(dateArg) {
+        try {
+            LocalDate.parse(dateArg)
+        } catch (e: Exception) {
+            LocalDate.now()
+        }
+    }
+
     var title by remember { mutableStateOf("") }
     var director by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(5.0f) }
@@ -190,10 +204,32 @@ fun MovieRegistrationScreen(
 
                 MovieRegistrationTopBar(
                     onClick = { navController.popBackStack() },
+                    onClickSave = {
+                        val releaseDate = String.format("%04d-%02d-%02d", year, month, day)
+                        val uploadedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+                        val record = MovieRecord(
+                            date = selectedDate.toString(),
+                            title = title,
+                            releaseDate = releaseDate,
+                            imageUrl = imageUri.value?.toString() ?: "",
+                            genre = "",
+                            director = director,
+                            memo = "",
+                            rating = rating,
+                            uploadedAt = uploadedAt
+                        )
+
+                        navController.currentBackStackEntry?.savedStateHandle?.set("movieRecord", record)
+                        navController.navigate(RemindNavigation.MovieRecord.route)
+                    },
                     modifier = Modifier
                         .padding(top = 36.dp, start = 16.dp, end = 16.dp),
                     textColor = if (hasImage) Color.White else Color.Black,
-                    navController = navController
+                    navController = navController,
+                    imageUri = imageUri.value,
+                    title = title,
+                    director = director
                 )
 
                 Text(

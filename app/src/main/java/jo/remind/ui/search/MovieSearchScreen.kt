@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import jo.remind.R
+import jo.remind.data.model.record.MovieRecord
 import jo.remind.ui.RemindNavigation
 import jo.remind.ui.component.MovieCard
 import jo.remind.viewmodel.MovieSearchViewModel
@@ -163,7 +164,7 @@ fun MovieSearchScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        navController.navigate(RemindNavigation.MovieRegistration.route)
+                        navController.navigate(RemindNavigation.MovieRegistration.withDate(selectedDate.toString()))
                     }
             )
         }
@@ -192,6 +193,18 @@ fun MovieSearchScreen(
                         isSelected = isSelected,
                         onClick = {
                             selectedMovieId = if (selectedMovieId == movie.id) null else movie.id
+                            val record = MovieRecord(
+                                date = selectedDate.toString(),
+                                title = movie.title,
+                                releaseDate = movie.release_date,
+                                imageUrl = movie.poster_path?.let { "https://image.tmdb.org/t/p/w500$it" } ?: "",
+                                genre = genreText,
+                                director = "",
+                                rating = 5.0f,
+                                uploadedAt = ""
+                            )
+
+                            navController.currentBackStackEntry?.savedStateHandle?.set("movieRecord", record)
                             navController.navigate(RemindNavigation.MovieRecord.route)
                         }
                     )

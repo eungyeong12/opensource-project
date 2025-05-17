@@ -52,7 +52,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import jo.remind.R
-import jo.remind.data.model.daily.DailyRecord
+import jo.remind.data.model.record.DailyRecord
 import jo.remind.ui.RemindNavigation
 import jo.remind.ui.RemindNavigationActions
 import jo.remind.ui.registration.DatePicker
@@ -193,6 +193,8 @@ fun DailyRecordScreen(navController: NavHostController) {
                     .document(userId)
                     .collection("records")
                     .document(now)
+                    .collection("daily")
+                    .document()
                     .set(record)
                     .addOnSuccessListener {
                         isSaving = false

@@ -1,6 +1,7 @@
 package jo.remind.ui.record
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,26 +43,31 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import jo.remind.R
+import jo.remind.data.model.record.MovieRecord
+import jo.remind.ui.RemindNavigation
+import jo.remind.ui.RemindNavigationActions
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun MovieRecordTopBar(
     onClick: () -> Unit,
+    onClickSave: () -> Unit,
     modifier: Modifier,
-    textColor: Color
+    title : String
 ) {
-    val backIcon = if (textColor == Color.White) {
-        R.drawable.prev_white
-    } else {
-        R.drawable.prev
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -85,7 +92,7 @@ fun MovieRecordTopBar(
             modifier = Modifier.fillMaxWidth()
         ) {
             Image(
-                painter = painterResource(id = backIcon),
+                painter = painterResource(id = R.drawable.prev_white),
                 contentDescription = "뒤로가기",
                 modifier = Modifier
                     .size(18.dp)
@@ -98,24 +105,29 @@ fun MovieRecordTopBar(
             Spacer(modifier = Modifier.width(12.dp))
 
             Text(
-                text = "영화 제목",
-                color = textColor,
+                text = title,
+                color = Color.White,
                 style = MaterialTheme.typography.titleMedium,
                 fontSize = 18.sp,
-                modifier = Modifier.padding(bottom = 2.dp)
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = 2.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = "저장",
-                color = textColor,
+                color = Color.White,
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
+                        onClickSave()
                     }
             )
         }
@@ -127,15 +139,17 @@ fun MovieRecordTopBar(
 fun MovieRecordScreen(
     navController: NavHostController,
 ) {
-    var rating by remember { mutableStateOf(5.0f) }
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var memoText by remember { mutableStateOf("") }
+    val record = navController.previousBackStackEntry
+        ?.savedStateHandle
+        ?.get<MovieRecord>("movieRecord")
+
+    var rating by remember { mutableStateOf(record?.rating ?: 5.0f) }
+    var imageUri by remember { mutableStateOf(record?.imageUrl?.takeIf { it.isNotEmpty() }?.let { Uri.parse(it) }) }
+    var memoText by remember { mutableStateOf(record?.memo ?: "") }
 
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> imageUri = uri }
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    var isSaving by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -149,8 +163,6 @@ fun MovieRecordScreen(
                 .height(270.dp)
                 .background(Color(0xFFE9E9E9))
         ) {
-            val hasImage = imageUri != null
-
             imageUri?.let { uri ->
                 Image(
                     painter = rememberAsyncImagePainter(
@@ -173,24 +185,43 @@ fun MovieRecordScreen(
 
             MovieRecordTopBar(
                 onClick = { navController.popBackStack() },
+                onClickSave = {
+                    if (memoText.isBlank()) {
+                        Toast.makeText(context, "내용을 작성해주세요.", Toast.LENGTH_SHORT).show()
+                        return@MovieRecordTopBar
+                    }
+                    isSaving = true
+                    val userId = Firebase.auth.currentUser?.uid ?: return@MovieRecordTopBar
+                    val now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+                    val updatedRecord = record?.copy(
+                        memo = memoText,
+                        rating = rating,
+                        uploadedAt = now
+                    ) ?: return@MovieRecordTopBar
+
+                    val navActions = RemindNavigationActions(navController)
+
+                    Firebase.firestore
+                        .collection("users")
+                        .document(userId)
+                        .collection("records")
+                        .document(now)
+                        .collection("movie")
+                        .document()
+                        .set(updatedRecord)
+                        .addOnSuccessListener {
+                            isSaving = false
+                            navActions.navigateTo(RemindNavigation.Home)
+                        }
+                        .addOnFailureListener {
+                            isSaving = false
+                            Toast.makeText(context, "저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                },
                 modifier = Modifier
                     .padding(top = 36.dp, start = 16.dp, end = 16.dp),
-                textColor = if (hasImage) Color.White else Color.Black
-            )
-
-            Text(
-                text = "+",
-                fontSize = 60.sp,
-                color = if (hasImage) Color.White else Color.Black,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .offset(y = 8.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        launcher.launch("image/*")
-                    }
+                title = record?.title ?: ""
             )
 
             Box(
@@ -229,6 +260,20 @@ fun MovieRecordScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             )
+        }
+
+        if (isSaving) {
+            Dialog(onDismissRequest = {}) {
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.Transparent),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+                }
+            }
         }
     }
 }
