@@ -48,6 +48,7 @@ import jo.remind.R
 import jo.remind.ui.RemindNavigation
 import jo.remind.ui.component.BookCard
 import jo.remind.viewmodel.BookSearchViewModel
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -106,6 +107,16 @@ fun BookSearchScreen(
     navController: NavHostController,
     viewModel: BookSearchViewModel = hiltViewModel(),
 ) {
+    val dateArg = navController.currentBackStackEntry?.arguments?.getString("date")
+    var selectedDate by remember {
+        mutableStateOf(
+            try {
+                LocalDate.parse(dateArg)
+            } catch (e: Exception) {
+                LocalDate.now()
+            }
+        )
+    }
     val books = viewModel.books
     var query by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current

@@ -1,7 +1,7 @@
 package jo.remind.ui.record
 
 import android.net.Uri
-import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -24,7 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,13 +45,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import jo.remind.R
+import jo.remind.data.model.daily.DailyRecord
+import jo.remind.ui.RemindNavigation
+import jo.remind.ui.RemindNavigationActions
 import jo.remind.ui.registration.DatePicker
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.foundation.text.BasicTextField as BasicTextField1
 
@@ -138,8 +144,20 @@ fun DailyRecordScreen(navController: NavHostController) {
     val context = LocalContext.current
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    val today = remember { mutableStateOf(LocalDate.now()) }
+    val dateArg = navController.currentBackStackEntry?.arguments?.getString("date")
+    var selectedDate by remember {
+        mutableStateOf(
+            try {
+                LocalDate.parse(dateArg)
+            } catch (e: Exception) {
+                LocalDate.now()
+            }
+        )
+    }
+
     var showDatePicker by remember { mutableStateOf(false) }
+    val imageSlots = remember { mutableStateListOf<Uri?>(null, null, null, null, null) }
+    var isSaving by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -148,20 +166,52 @@ fun DailyRecordScreen(navController: NavHostController) {
             .padding(top = 36.dp, start = 16.dp, end = 16.dp, bottom = bottomPadding + 40.dp)
     ) {
         DailyRecordTopBar(
-            dateText = today.value.format(DateTimeFormatter.ofPattern("yyyy.M.d")),
+            dateText = selectedDate.format(DateTimeFormatter.ofPattern("yyyy.M.d")),
             onClickBack = { navController.popBackStack() },
             onClickSave = {
-                // 저장 처리
+                if (memoText.isBlank()) {
+                    Toast.makeText(context, "내용을 작성해주세요.", Toast.LENGTH_SHORT).show()
+                    return@DailyRecordTopBar
+                }
+                isSaving = true
+
+                val firestore = Firebase.firestore
+                val userId = Firebase.auth.currentUser?.uid ?: return@DailyRecordTopBar
+                val dateFormat = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                val now = LocalDateTime.now().format(dateFormat)
+
+                val record = DailyRecord(
+                    date = selectedDate.toString(),
+                    memo = memoText,
+                    imageUrls = imageSlots.filterNotNull().map { it.toString() },
+                    uploadedAt = now
+                )
+
+                val navActions = RemindNavigationActions(navController)
+
+                firestore.collection("users")
+                    .document(userId)
+                    .collection("records")
+                    .document(now)
+                    .set(record)
+                    .addOnSuccessListener {
+                        isSaving = false
+                        navActions.navigateTo(RemindNavigation.Home)
+                    }
+                    .addOnFailureListener {
+                        isSaving = false
+                        Toast.makeText(context, "저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    }
             },
             onClickDate = { showDatePicker = true }
         )
 
         if (showDatePicker) {
             DatePickerDialog(
-                initialDate = today.value,
+                initialDate = selectedDate,
                 onDismissRequest = { showDatePicker = false },
                 onDateSelected = {
-                    today.value = it
+                    selectedDate = it
                     showDatePicker = false
                 }
             )
@@ -169,7 +219,7 @@ fun DailyRecordScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        ImageCarouselSection()
+        ImageCarouselSection(imageSlots = imageSlots)
 
         Box(
             modifier = Modifier
@@ -195,14 +245,27 @@ fun DailyRecordScreen(navController: NavHostController) {
                     .fillMaxSize()
                     .padding(16.dp)
             )
+
+            if (isSaving) {
+                Dialog(onDismissRequest = {}) {
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.Transparent),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-fun ImageCarouselSection() {
-    val imageSlots = remember { mutableStateListOf<Uri?>(null, null, null, null, null) }
-    var selectedIndex by remember { mutableStateOf<Int?>(0) } // Int -> Int?
+fun ImageCarouselSection(imageSlots: MutableList<Uri?>) {
+    var selectedIndex by remember { mutableStateOf<Int?>(0) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -210,7 +273,7 @@ fun ImageCarouselSection() {
         if (uri != null && selectedIndex != null && selectedIndex in imageSlots.indices) {
             imageSlots[selectedIndex!!] = uri
             val nextIndex = imageSlots.indexOfFirst { it == null }
-            selectedIndex = if (nextIndex != -1) nextIndex else null // ⭐️ 모두 채워졌으면 null
+            selectedIndex = if (nextIndex != -1) nextIndex else null
         }
     }
 

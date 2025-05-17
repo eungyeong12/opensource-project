@@ -24,6 +24,7 @@ import jo.remind.R
 import jo.remind.ui.RemindNavigation
 import jo.remind.ui.component.CalendarScreen
 import jo.remind.ui.component.RecordTypeDialog
+import java.time.LocalDate
 
 @Composable
 fun HomeScreen(
@@ -31,6 +32,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     Box(
         modifier = modifier
@@ -38,7 +40,13 @@ fun HomeScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
     ) {
-        CalendarScreen(navController = navController)
+        CalendarScreen(
+            navController = navController,
+            onRecordRequest = { date ->
+                selectedDate = date
+                showDialog = true
+            }
+        )
 
         FloatingActionButton(
             onClick = { showDialog = true },
@@ -62,14 +70,11 @@ fun HomeScreen(
                 onDismiss = { showDialog = false },
                 onSelect = { selected ->
                     showDialog = false
-                    if (selected == "영화 기록하기") {
-                        navController.navigate(RemindNavigation.MovieSearch.route)
-                    }
-                    if (selected == "책 기록하기") {
-                        navController.navigate(RemindNavigation.BookSearch.route)
-                    }
-                    if (selected == "일상 기록하기") {
-                        navController.navigate(RemindNavigation.DailyRecord.route)
+                    val dateText = selectedDate.toString()
+                    when (selected) {
+                        "영화 기록하기" -> navController.navigate(RemindNavigation.MovieSearch.withDate(dateText))
+                        "책 기록하기" -> navController.navigate(RemindNavigation.BookSearch.withDate(dateText))
+                        "일상 기록하기" -> navController.navigate(RemindNavigation.DailyRecord.withDate(dateText))
                     }
                 }
             )

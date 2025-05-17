@@ -5,10 +5,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.navigation.CustomBottomBar
 import jo.remind.ui.record.BookRecordScreen
@@ -18,6 +20,7 @@ import jo.remind.ui.registration.BookRegistrationScreen
 import jo.remind.ui.registration.MovieRegistrationScreen
 import jo.remind.ui.search.BookSearchScreen
 import jo.remind.ui.search.MovieSearchScreen
+import java.time.LocalDate
 
 @Composable
 fun MainScreen() {
@@ -57,10 +60,22 @@ fun MainScreen() {
             composable(RemindNavigation.Record.route) {
                 RecordScreen()
             }
-            composable(RemindNavigation.MovieSearch.route) {
+            composable(
+                route = RemindNavigation.MovieSearch.route + "?date={date}",
+                arguments = listOf(navArgument("date") {
+                    type = NavType.StringType
+                    defaultValue = LocalDate.now().toString()
+                })
+            ) {
                 MovieSearchScreen(navController)
             }
-            composable(RemindNavigation.BookSearch.route) {
+            composable(
+                route = RemindNavigation.BookSearch.route + "?date={date}",
+                arguments = listOf(navArgument("date") {
+                    type = NavType.StringType
+                    defaultValue = LocalDate.now().toString()
+                })
+            ) {
                 BookSearchScreen(navController)
             }
             composable(RemindNavigation.MovieRegistration.route) {
@@ -75,7 +90,13 @@ fun MainScreen() {
             composable(RemindNavigation.BookRecord.route) {
                 BookRecordScreen(navController)
             }
-            composable(RemindNavigation.DailyRecord.route) {
+            composable(
+                route = RemindNavigation.DailyRecord.route + "?date={date}",
+                arguments = listOf(navArgument("date") {
+                    type = NavType.StringType
+                    defaultValue = LocalDate.now().toString()
+                })
+            ) {
                 DailyRecordScreen(navController)
             }
         }

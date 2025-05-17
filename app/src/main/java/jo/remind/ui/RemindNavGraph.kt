@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import jo.remind.ui.home.HomeScreen
 import jo.remind.ui.login.LoginScreen
 import jo.remind.ui.record.BookRecordScreen
@@ -16,6 +18,7 @@ import jo.remind.ui.registration.MovieRegistrationScreen
 import jo.remind.ui.search.BookSearchScreen
 import jo.remind.ui.search.MovieSearchScreen
 import jo.remind.ui.splash.SplashScreen
+import java.time.LocalDate
 
 @Composable
 fun RemindNavGraph(
@@ -58,11 +61,23 @@ fun RemindNavGraph(
             RecordScreen()
         }
 
-        composable(RemindNavigation.MovieSearch.route) {
+        composable(
+            route = RemindNavigation.MovieSearch.route + "?date={date}",
+            arguments = listOf(navArgument("date") {
+                type = NavType.StringType
+                defaultValue = LocalDate.now().toString()
+            })
+        ) {
             MovieSearchScreen(navController)
         }
 
-        composable(RemindNavigation.BookSearch.route) {
+        composable(
+            route = RemindNavigation.BookSearch.route + "?date={date}",
+            arguments = listOf(navArgument("date") {
+                type = NavType.StringType
+                defaultValue = LocalDate.now().toString()
+            })
+        ) {
             BookSearchScreen(navController)
         }
 
@@ -82,7 +97,13 @@ fun RemindNavGraph(
             BookRecordScreen(navController)
         }
 
-        composable(RemindNavigation.DailyRecord.route) {
+        composable(
+            route = RemindNavigation.DailyRecord.route + "?date={date}",
+            arguments = listOf(navArgument("date") {
+                type = NavType.StringType
+                defaultValue = LocalDate.now().toString()
+            })
+        ) {
             DailyRecordScreen(navController)
         }
     }

@@ -49,6 +49,7 @@ import jo.remind.R
 import jo.remind.ui.RemindNavigation
 import jo.remind.ui.component.MovieCard
 import jo.remind.viewmodel.MovieSearchViewModel
+import java.time.LocalDate
 
 @Composable
 fun MovieSearchTopBar(
@@ -105,6 +106,16 @@ fun MovieSearchScreen(
     navController: NavHostController,
     viewModel: MovieSearchViewModel = hiltViewModel(),
 ) {
+    val dateArg = navController.currentBackStackEntry?.arguments?.getString("date")
+    var selectedDate by remember {
+        mutableStateOf(
+            try {
+                LocalDate.parse(dateArg)
+            } catch (e: Exception) {
+                LocalDate.now()
+            }
+        )
+    }
     val movieList = viewModel.movieList
     var query by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current

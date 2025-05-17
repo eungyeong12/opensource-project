@@ -1,24 +1,19 @@
 package jo.remind.ui.component
 
-import android.widget.NumberPicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import jo.remind.R
 import jo.remind.ui.RemindNavigation
@@ -45,7 +39,8 @@ import java.time.YearMonth
 
 @Composable
 fun CalendarScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    onRecordRequest: (LocalDate) -> Unit
 ) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -94,17 +89,7 @@ fun CalendarScreen(
     }
 
     if (showDialog) {
-        RecordTypeDialog(
-            onDismiss = { showDialog = false },
-            onSelect = { selected ->
-                showDialog = false
-                when (selected) {
-                    "영화 기록하기" -> navController.navigate(RemindNavigation.MovieSearch.route)
-                    "책 기록하기" -> navController.navigate(RemindNavigation.BookSearch.route)
-                    "일상 기록하기" -> navController.navigate(RemindNavigation.DailyRecord.route)
-                }
-            }
-        )
+        onRecordRequest(selectedDate)
     }
 }
 
