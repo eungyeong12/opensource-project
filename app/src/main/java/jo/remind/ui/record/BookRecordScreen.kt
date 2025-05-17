@@ -208,7 +208,7 @@ fun BookRecordScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 32.dp)
+                .padding(start = 24.dp, end = 24.dp, top = 32.dp, bottom = 16.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color(0xFFF6F9F2)),
             contentAlignment = Alignment.TopStart
@@ -263,3 +263,4 @@ fun BookRatingBar(
         }
     )
 }
+

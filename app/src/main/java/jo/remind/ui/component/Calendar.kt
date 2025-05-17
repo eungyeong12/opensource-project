@@ -6,17 +6,30 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +39,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import jo.remind.R
 import jo.remind.ui.RemindNavigation
+import jo.remind.ui.record.DatePickerDialog
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -33,28 +47,32 @@ import java.time.YearMonth
 fun CalendarScreen(
     navController: NavHostController
 ) {
-    var currentYearMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var showNumberPicker by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
+    val currentYearMonth = remember { derivedStateOf { YearMonth.of(selectedDate.year, selectedDate.month) } }
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         CalendarHeader(
-            yearMonth = currentYearMonth,
-            onPrev = { currentYearMonth = currentYearMonth.minusMonths(1) },
-            onNext = { currentYearMonth = currentYearMonth.plusMonths(1) },
-            onTextClick = { showNumberPicker = true }
+            yearMonth = currentYearMonth.value,
+            onPrev = {
+                selectedDate = selectedDate.minusMonths(1).withDayOfMonth(1)
+            },
+            onNext = {
+                selectedDate = selectedDate.plusMonths(1).withDayOfMonth(1)
+            },
+            onTextClick = { showDatePicker = true }
         )
+
         Box(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CalendarGrid(
-                yearMonth = currentYearMonth,
+                yearMonth = currentYearMonth.value,
                 selectedDate = selectedDate,
                 onDateSelected = {
                     selectedDate = it
@@ -64,16 +82,13 @@ fun CalendarScreen(
         }
     }
 
-    if (showNumberPicker) {
-        NumberPickerDialog(
-            initialYearMonth = currentYearMonth,
-            onDismiss = { showNumberPicker = false },
-            onConfirm = {
-                currentYearMonth = it
-                val newDay = selectedDate.dayOfMonth
-                val maxDay = it.lengthOfMonth()
-                selectedDate = it.atDay(minOf(newDay, maxDay))
-                showNumberPicker = false
+    if (showDatePicker) {
+        DatePickerDialog(
+            initialDate = selectedDate,
+            onDismissRequest = { showDatePicker = false },
+            onDateSelected = {
+                selectedDate = it
+                showDatePicker = false
             }
         )
     }
@@ -83,11 +98,10 @@ fun CalendarScreen(
             onDismiss = { showDialog = false },
             onSelect = { selected ->
                 showDialog = false
-                if (selected == "영화 기록하기") {
-                    navController.navigate(RemindNavigation.MovieSearch.route)
-                }
-                if (selected == "책 기록하기") {
-                    navController.navigate(RemindNavigation.BookSearch.route)
+                when (selected) {
+                    "영화 기록하기" -> navController.navigate(RemindNavigation.MovieSearch.route)
+                    "책 기록하기" -> navController.navigate(RemindNavigation.BookSearch.route)
+                    "일상 기록하기" -> navController.navigate(RemindNavigation.DailyRecord.route)
                 }
             }
         )
@@ -225,81 +239,4 @@ fun CalendarGrid(
             }
         }
     }
-}
-
-@Composable
-fun NumberPickerDialog(
-    initialYearMonth: YearMonth,
-    onDismiss: () -> Unit,
-    onConfirm: (YearMonth) -> Unit
-) {
-    var selectedYear by remember { mutableStateOf(initialYearMonth.year) }
-    var selectedMonth by remember { mutableStateOf(initialYearMonth.monthValue) }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = Color.White,
-        confirmButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            onConfirm(YearMonth.of(selectedYear, selectedMonth))
-                        }
-                ) {
-                    Text(text = "취소", color = Color(0xFF4CAF50))
-                }
-                Spacer(modifier = Modifier.width(64.dp))
-                Box(
-                    modifier = Modifier
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            onConfirm(YearMonth.of(selectedYear, selectedMonth))
-                        }
-                ) {
-                    Text(text = "확인", color = Color(0xFF4CAF50))
-                }
-            }
-        },
-        dismissButton = {},
-        text = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                AndroidView(
-                    factory = { context ->
-                        NumberPicker(context).apply {
-                            minValue = 1900
-                            maxValue = 2125
-                            value = selectedYear
-                            setOnValueChangedListener { _, _, newVal ->
-                                selectedYear = newVal
-                            }
-                        }
-                    }
-                )
-                AndroidView(
-                    factory = { context ->
-                        NumberPicker(context).apply {
-                            minValue = 1
-                            maxValue = 12
-                            value = selectedMonth
-                            setOnValueChangedListener { _, _, newVal ->
-                                selectedMonth = newVal
-                            }
-                        }
-                    }
-                )
-            }
-        }
-    )
 }

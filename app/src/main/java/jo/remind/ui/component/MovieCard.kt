@@ -39,6 +39,8 @@ fun MovieCard(
     modifier: Modifier = Modifier
 ) {
     val borderColor = if (isSelected) Color.Black else Color(0xFFE1E1E1)
+    val isImageAvailable = !imageUrl.isNullOrBlank()
+    val placeholderBackground = Color(0xFFE9EDF1)
 
     Box(
         modifier = modifier
@@ -52,14 +54,24 @@ fun MovieCard(
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AsyncImage(
-                model = imageUrl ?: R.drawable.placeholder,
-                contentDescription = "Movie Poster",
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
                     .size(width = 74.dp, height = 104.dp)
+                    .shadow(1.dp, shape = RoundedCornerShape(8.dp), clip = true)
                     .clip(RoundedCornerShape(8.dp))
-            )
+                    .background(
+                        color = if (isImageAvailable) Color.White else placeholderBackground
+                    )
+            ) {
+                AsyncImage(
+                    model = imageUrl ?: R.drawable.placeholder,
+                    contentDescription = "Poster",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            }
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -78,5 +90,3 @@ fun MovieCard(
         }
     }
 }
-
-

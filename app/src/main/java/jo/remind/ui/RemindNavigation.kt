@@ -15,6 +15,7 @@ sealed class RemindNavigation(val route: String) {
     object BookRegistration : RemindNavigation("book_registration")
     object MovieRecord : RemindNavigation("movie_record")
     object BookRecord : RemindNavigation("book_record")
+    object DailyRecord : RemindNavigation("daily_record")
 }
 
 class RemindNavigationActions(private val navController: NavHostController) {
