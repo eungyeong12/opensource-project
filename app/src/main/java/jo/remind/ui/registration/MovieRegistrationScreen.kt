@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -62,7 +61,6 @@ fun MovieRegistrationTopBar(
     onClickSave: () -> Unit,
     modifier: Modifier,
     textColor: Color,
-    navController: NavHostController,
     imageUri: Uri?,
     title: String,
     director: String
@@ -226,7 +224,6 @@ fun MovieRegistrationScreen(
                     modifier = Modifier
                         .padding(top = 36.dp, start = 16.dp, end = 16.dp),
                     textColor = if (hasImage) Color.White else Color.Black,
-                    navController = navController,
                     imageUri = imageUri.value,
                     title = title,
                     director = director

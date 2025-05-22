@@ -1,5 +1,6 @@
 package jo.remind.ui.search
 
+import android.os.Parcelable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,9 +46,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import jo.remind.R
+import jo.remind.data.model.record.BookRecord
+import jo.remind.data.model.record.MovieRecord
 import jo.remind.ui.RemindNavigation
 import jo.remind.ui.component.BookCard
 import jo.remind.viewmodel.BookSearchViewModel
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -165,7 +169,7 @@ fun BookSearchScreen(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        navController.navigate(RemindNavigation.BookRegistration.route)
+                        navController.navigate(RemindNavigation.BookRegistration.withDate(selectedDate.toString()))
                     }
             )
         }
@@ -193,6 +197,16 @@ fun BookSearchScreen(
                         isSelected = isSelected,
                         onClick = {
                             selectedBookIsbn = if (isSelected) null else book.isbn
+
+                            val record = BookRecord(
+                                date = selectedDate.toString(),
+                                title = book.title,
+                                writer = book.authors.joinToString(),
+                                publishDate = formatDateToDotPattern(book.datetime),
+                                imageUrl = book.thumbnail
+                            )
+
+                            navController.currentBackStackEntry?.savedStateHandle?.set("bookRecord", record)
                             navController.navigate(RemindNavigation.BookRecord.route)
                         }
                     )

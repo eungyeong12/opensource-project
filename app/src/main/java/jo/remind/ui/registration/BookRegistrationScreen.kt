@@ -1,6 +1,7 @@
 package jo.remind.ui.registration
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -39,16 +40,25 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import jo.remind.R
+import jo.remind.data.model.record.BookRecord
+import jo.remind.data.model.record.MovieRecord
 import jo.remind.ui.RemindNavigation
+import jo.remind.ui.search.formatDateToDotPattern
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun BookRegistrationTopBar(
     onClick: () -> Unit,
+    onClickSave: () -> Unit,
     modifier: Modifier,
     textColor: Color,
-    navController: NavHostController
+    imageUri: Uri?,
+    title: String,
+    writer: String
 ) {
+    val context = LocalContext.current
     val backIcon = if (textColor == Color.White) {
         R.drawable.prev_white
     } else {
@@ -110,7 +120,19 @@ fun BookRegistrationTopBar(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
                     ) {
-                        navController.navigate(RemindNavigation.BookRecord.route)
+                        if (imageUri == null) {
+                            Toast.makeText(context, "책 이미지를 추가해주세요.", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        if (title.isBlank()) {
+                            Toast.makeText(context, "책 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        if (writer.isBlank()) {
+                            Toast.makeText(context, "책 저자를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
+                        onClickSave()
                     }
             )
         }
@@ -122,6 +144,14 @@ fun BookRegistrationTopBar(
 fun BookRegistrationScreen(
     navController: NavHostController,
 ) {
+    val dateArg = navController.currentBackStackEntry?.arguments?.getString("date")
+    val selectedDate = remember(dateArg) {
+        try {
+            LocalDate.parse(dateArg)
+        } catch (e: Exception) {
+            LocalDate.now()
+        }
+    }
     var title by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf(5.0f) }
@@ -180,10 +210,30 @@ fun BookRegistrationScreen(
 
                 BookRegistrationTopBar(
                     onClick = { navController.popBackStack() },
+                    onClickSave = {
+                        val publishDate = String.format("%04d-%02d-%02d", year, month, day)
+                        val uploadedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
+                        val record = BookRecord(
+                            date = selectedDate.toString(),
+                            title = title,
+                            writer = author,
+                            publishDate = publishDate,
+                            imageUrl = imageUri.value?.toString() ?: "",
+                            memo = "",
+                            rating = rating,
+                            uploadedAt = uploadedAt
+                        )
+
+                        navController.currentBackStackEntry?.savedStateHandle?.set("bookRecord", record)
+                        navController.navigate(RemindNavigation.BookRecord.route)
+                    },
                     modifier = Modifier
                         .padding(top = 36.dp, start = 16.dp, end = 16.dp),
                     textColor = if (hasImage) Color.White else Color.Black,
-                    navController = navController
+                    imageUri = imageUri.value,
+                    title = title,
+                    writer = author
                 )
 
                 Text(
